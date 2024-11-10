@@ -15,32 +15,26 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // Define URL access permissions
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/products", "/register", "/login").permitAll() // Accessible to all users
-                        .requestMatchers("/admin/**").hasRole("ADMIN") // Admin-only access
-                        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN") // User or admin access
-                        .anyRequest().authenticated() // All other requests require authentication
+                        .requestMatchers("/", "/products", "/register", "/login").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+                        .anyRequest().authenticated()
                 )
-                // Configure form login
                 .formLogin(form -> form
                         .loginPage("/login") // Custom login page
-                        .defaultSuccessUrl("/products", true) // Force redirect to products after login
+                        .defaultSuccessUrl("/products", true) // Redirect to products page after successful login
                         .permitAll()
                 )
-                // Configure logout behavior
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/") // Redirect to home page after logout
+                        .logoutSuccessUrl("/")
                         .permitAll()
-                )
-                // Disable CSRF for testing purposes (if required for troubleshooting)
-                .csrf().disable();
+                );
 
         return http.build();
     }
 
-    // Password encoder for secure password storage
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
