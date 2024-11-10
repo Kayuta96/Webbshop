@@ -1,7 +1,6 @@
 package com.example.webbshop.controller;
 
 import com.example.webbshop.model.Product;
-import com.example.webbshop.model.Category;
 import com.example.webbshop.service.ProductService;
 import com.example.webbshop.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +32,19 @@ public class ProductController {
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("product", new Product());
-        model.addAttribute("categories", categoryService.getAllCategories()); // Load categories for selection
-        return "product-form"; // Points to product-form.html
+        model.addAttribute("categories", categoryService.getAllCategories());
+        return "product-form";
     }
 
     @PostMapping
-    public String createProduct(@ModelAttribute Product product) {
+    public String createProduct(@ModelAttribute Product product, Model model) {
+        // Manual validation checks
+        if (product.getName() == null || product.getName().isEmpty() ||
+                product.getPrice() <= 0 || product.getQuantity() < 0) {
+            model.addAttribute("error", "Please provide valid product details.");
+            model.addAttribute("categories", categoryService.getAllCategories());
+            return "product-form";
+        }
         productService.saveProduct(product);
         return "redirect:/products";
     }
@@ -50,12 +56,21 @@ public class ProductController {
             model.addAttribute("product", product.get());
             model.addAttribute("categories", categoryService.getAllCategories());
             return "product-form";
+        } else {
+            model.addAttribute("error", "Product not found");
+            return "redirect:/products";
         }
-        return "redirect:/products";
     }
 
     @PostMapping("/update/{id}")
-    public String updateProduct(@PathVariable Long id, @ModelAttribute Product product) {
+    public String updateProduct(@PathVariable Long id, @ModelAttribute Product product, Model model) {
+        // Manual validation checks
+        if (product.getName() == null || product.getName().isEmpty() ||
+                product.getPrice() <= 0 || product.getQuantity() < 0) {
+            model.addAttribute("error", "Please provide valid product details.");
+            model.addAttribute("categories", categoryService.getAllCategories());
+            return "product-form";
+        }
         product.setId(id);
         productService.saveProduct(product);
         return "redirect:/products";

@@ -22,13 +22,13 @@ public class AuthenticationService {
 
     public Optional<User> authenticate(String email, String password) {
         Optional<User> userOptional = userRepository.findByEmail(email);
-
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            if (passwordEncoder.matches(password, user.getPassword())) {
+            if (passwordEncoder.matches(password, user.getPassword())) { // Match raw and encoded passwords
                 return Optional.of(user);
             }
         }
         return Optional.empty();
     }
+
 }

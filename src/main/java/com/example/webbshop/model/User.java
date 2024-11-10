@@ -26,6 +26,7 @@ public class User {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.roles.add("ROLE_USER"); // Default role as USER
     }
 
     // Getters and Setters
