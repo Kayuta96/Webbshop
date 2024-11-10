@@ -1,96 +1,80 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Home | E-Commerce Store</title>
-  <style>
-    /* General Styles */
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f0f2f5;
-      color: #333;
-      text-align: center;
-    }
+    <title>Home | E-Commerce Store</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+            text-align: center;
+        }
 
-    /* Header and Navigation */
-    header {
-      background-color: #007bff;
-      color: #fff;
-      padding: 20px;
-    }
+        header {
+            background-color: #007bff;
+            color: #fff;
+            padding: 20px;
+        }
 
-    header h1 {
-      margin: 0;
-    }
+        header h1 {
+            margin: 0;
+        }
 
-    nav {
-      margin: 15px 0;
-    }
+        nav {
+            margin-top: 10px;
+        }
 
-    nav a {
-      color: #007bff;
-      text-decoration: none;
-      font-weight: bold;
-      margin: 0 15px;
-      transition: color 0.3s;
-    }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 0 15px;
+            transition: color 0.3s;
+        }
 
-    nav a:hover {
-      color: #0056b3;
-    }
+        nav a:hover {
+            color: #ffe66d;
+        }
 
-    /* Content */
-    .container {
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 20px;
-      background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    .featured-products {
-      margin-top: 30px;
-    }
-
-    .featured-products h2 {
-      color: #333;
-    }
-
-    .featured-products p {
-      color: #666;
-    }
-
-    /* Footer */
-    footer {
-      margin-top: 30px;
-      padding: 10px 0;
-      background-color: #f8f9fa;
-      color: #555;
-      font-size: 14px;
-    }
-  </style>
+        .welcome-message {
+            color: #ffe66d;
+            font-size: 1.1em;
+            margin-left: 10px;
+        }
+    </style>
 </head>
 <body>
 <header>
-  <h1>Welcome to Our E-Commerce Store</h1>
-  <nav>
-    <a th:href="@{/products}">View Products</a> |
-    <a th:href="@{/login}">Login</a> |
-    <a th:href="@{/register}">Register</a>
-  </nav>
+    <h1>Welcome to Our E-Commerce Store</h1>
+
+    <!-- Navigation Links -->
+    <nav>
+        <a th:href="@{/products}">View Products</a>
+        <span th:if="${#authentication.principal != null}">
+            | <a th:href="@{/orders/history}">My Orders</a>
+            | <a th:href="@{/logout}">Logout</a> <!-- Logout Link -->
+            <span class="welcome-message">Hello, <span th:text="${#authentication.principal.username}">User</span>!</span>
+        </span>
+        <span th:if="${#authentication.principal == null}">
+            | <a th:href="@{/login}">Login</a>
+            | <a th:href="@{/register}">Register</a>
+        </span>
+    </nav>
 </header>
 
 <div class="container">
-  <div class="featured-products">
+    <!-- Logout Confirmation Message -->
+    <p th:if="${param.logout}" style="color: green; font-weight: bold;">You have been logged out successfully.</p>
+
     <h2>Featured Products</h2>
     <p>Check out our latest and most popular products!</p>
-  </div>
 </div>
 
 <footer>
-  <p>&copy; 2024 E-Commerce Store. All rights reserved.</p>
+    <p>&copy; 2024 E-Commerce Store. All rights reserved.</p>
 </footer>
 </body>
 </html>

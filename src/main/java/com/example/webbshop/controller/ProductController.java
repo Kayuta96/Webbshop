@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -75,6 +76,14 @@ public class ProductController {
         productService.saveProduct(product);
         return "redirect:/products";
     }
+    @GetMapping("/search")
+    public String searchProducts(@RequestParam("query") String query, Model model) {
+        List<Product> products = productService.searchProductsByName(query);
+        model.addAttribute("products", products);
+        return "product-list"; // Reuse the existing product list view
+    }
+
+
 
     @GetMapping("/delete/{id}")
     public String deleteProduct(@PathVariable Long id) {

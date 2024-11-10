@@ -36,11 +36,12 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/")
+                        .logoutUrl("/logout") // Set the logout URL to /logout
+                        .logoutSuccessUrl("/") // Redirect to home after logout
+                        .invalidateHttpSession(true) // Invalidate session
+                        .deleteCookies("JSESSIONID") // Delete session cookie
                         .permitAll()
                 );
-        // Removed csrf disabling for security reasons
 
         return http.build();
     }

@@ -30,6 +30,11 @@ public class ProductService {
         return productRepository.save(product);
     }
 
+    public List<Product> searchProductsByName(String query) {
+        return productRepository.findByNameContainingIgnoreCase(query);
+    }
+
+
     public Product updateProduct(Long id, Product updatedProduct) {
         return productRepository.findById(id).map(product -> {
             product.setName(updatedProduct.getName());

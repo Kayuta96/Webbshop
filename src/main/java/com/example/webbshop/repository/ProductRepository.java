@@ -10,10 +10,11 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
     // Find products by name containing a keyword (e.g., for search functionality)
-    List<Product> findByNameContainingIgnoreCase(String keyword);
 
     // Find products by category ID
     List<Product> findByCategoryId(Long categoryId);
+
+    List<Product> findByNameContainingIgnoreCase(String name);
 
     // Find products within a specific price range
     List<Product> findByPriceBetween(Double minPrice, Double maxPrice);
