@@ -2,26 +2,86 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Checkout</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+      text-align: center;
+      padding: 12px;
+    }
+    th {
+      background-color: #f8f9fa;
+      font-weight: bold;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    .total-price {
+      font-weight: bold;
+      font-size: 1.2em;
+      text-align: right;
+    }
+    .confirm-btn {
+      display: inline-block;
+      background-color: #28a745;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 5px;
+      text-align: center;
+      text-decoration: none;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    .confirm-btn:hover {
+      background-color: #218838;
+    }
+  </style>
 </head>
 <body>
-<h1>Checkout</h1>
-<table>
-  <thead>
-  <tr>
-    <th>Product</th>
-    <th>Quantity</th>
-    <th>Total</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr th:each="item : ${cart.items}">
-    <td th:text="${item.product.name}"></td>
-    <td th:text="${item.quantity}"></td>
-    <td th:text="${item.product.price * item.quantity}"></td>
-  </tr>
-  </tbody>
-</table>
-<p>Total Price: <span th:text="${totalPrice}"></span></p>
-<a th:href="@{/cart/confirmOrder(userId=${cart.user.id})}">Confirm Order</a>
+<div class="container">
+  <h1>Checkout</h1>
+  <table>
+    <thead>
+    <tr>
+      <th>Product</th>
+      <th>Quantity</th>
+      <th>Total</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : ${cart.items}">
+      <td th:text="${item.product.name}">Product Name</td>
+      <td th:text="${item.quantity}">Quantity</td>
+      <td th:text="${item.product.price * item.quantity}">Total Price</td>
+    </tr>
+    </tbody>
+  </table>
+  <p class="total-price">Total Price: <span th:text="${totalPrice}"></span> USD</p>
+  <div style="text-align: center;">
+    <a th:href="@{/cart/confirmOrder(userId=${cart.user.id})}" class="confirm-btn">Confirm Order</a>
+  </div>
+</div>
 </body>
 </html>

@@ -26,22 +26,22 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/products", "/register", "/login").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
-                        .anyRequest().authenticated()
+                        .requestMatchers("/", "/products", "/register", "/login").permitAll() // Public endpoints
+                        .requestMatchers("/admin/**").hasRole("ADMIN") // Admin access
+                        .requestMatchers("/user/**", "/cart/**").hasAnyRole("USER", "ADMIN") // User and Admin access to /user and /cart paths
+                        .anyRequest().authenticated() // All other requests require authentication
                 )
                 .formLogin(form -> form
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/products", true)
-                        .permitAll()
+                        .loginPage("/login") // Custom login page
+                        .defaultSuccessUrl("/products", true) // Redirect to /products after login
+                        .permitAll() // Allow everyone to access the login page
                 )
                 .logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET")) // Allow GET requests for logout
                         .logoutSuccessUrl("/") // Redirect to home after logout
                         .invalidateHttpSession(true) // Invalidate session
                         .deleteCookies("JSESSIONID") // Delete session cookie
-                        .permitAll()
+                        .permitAll() // Allow everyone to access logout
                 );
 
         return http.build();

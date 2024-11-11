@@ -7,9 +7,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import java.util.stream.Collectors;
 
 @Service
-public class UserAuthenticationService implements UserDetailsService { // Renamed to UserAuthenticationService
+public class UserAuthenticationService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
@@ -23,11 +24,15 @@ public class UserAuthenticationService implements UserDetailsService { // Rename
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
+        String[] roles = user.getRoles().stream()
+                .map(role -> role.startsWith("ROLE_") ? role.substring(5) : role) // Remove "ROLE_" prefix if present
+                .toArray(String[]::new);
+
         // Map User entity to UserDetails for Spring Security
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getEmail())
                 .password(user.getPassword())
-                .roles(user.getRoles().toArray(new String[0])) // Convert roles to String array
+                .roles(roles) // Pass roles without "ROLE_" prefix
                 .build();
     }
 }

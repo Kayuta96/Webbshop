@@ -3,7 +3,6 @@
 <head>
     <title>Product List</title>
     <style>
-        /* Styling remains the same */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -75,6 +74,11 @@
         .actions a:hover {
             color: #0056b3;
         }
+        .add-to-cart-form {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
     </style>
 </head>
 <body>
@@ -88,10 +92,10 @@
             <button type="submit">Search</button>
         </form>
         <div>
-            <a th:href="@{/index}" class="home-button">Home</a> <!-- Home button -->
-            <a th:href="@{/products/new}" class="add-product">Add New Product</a> <!-- Add Product button -->
-            <a th:href="@{/admin/categories}" class="category-button">View Categories</a> <!-- View Categories button -->
-            <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:href="@{/admin/categories/new}" class="add-category">Add Category</a> <!-- Add Category button for Admins only -->
+            <a th:href="@{/index}" class="home-button">Home</a>
+            <a th:href="@{/products/new}" class="add-product">Add New Product</a>
+            <a th:href="@{/admin/categories}" class="category-button">View Categories</a>
+            <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:href="@{/admin/categories/new}" class="add-category">Add Category</a>
         </div>
     </div>
 
@@ -99,14 +103,14 @@
     <div class="category-list">
         <h2>Filter by Category:</h2>
         <ul style="list-style: none; padding: 0;">
-            <li><a th:href="@{/products}">All Products</a></li> <!-- Link to show all products -->
+            <li><a th:href="@{/products}">All Products</a></li>
             <li th:each="category : ${categories}">
                 <a th:href="@{/products/search(query=${category.name})}" th:text="${category.name}">Category</a>
             </li>
         </ul>
     </div>
 
-    <!-- Product Table -->
+    <!-- Product Table with Add-to-Cart Form -->
     <table>
         <thead>
         <tr>
@@ -130,6 +134,19 @@
             <td class="actions">
                 <a th:href="@{/products/edit/{id}(id=${product.id})}">Edit</a>
                 <a th:href="@{/products/delete/{id}(id=${product.id})}" style="color: #dc3545;">Delete</a>
+                <!-- Add-to-Cart Form with CSRF Token -->
+                <form th:action="@{/cart/add}" method="post" class="add-to-cart-form">
+                    <input type="hidden" name="productId" th:value="${product.id}">
+                    <input type="number" name="quantity" min="1" value="1" style="width: 60px;">
+                    <input type="hidden" name="userId" th:value="${session.userId}">
+
+                    <!-- CSRF Token -->
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                    <button type="submit" style="background-color: #28a745; color: white; padding: 5px; border: none; border-radius: 5px; cursor: pointer;">
+                        Add to Cart
+                    </button>
+                </form>
             </td>
         </tr>
         </tbody>

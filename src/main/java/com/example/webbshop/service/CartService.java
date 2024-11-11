@@ -24,27 +24,32 @@ public class CartService {
     }
 
     public Cart getCartByUserId(Long userId) {
-        return cartRepository.findByUserId(userId).orElseGet(() -> new Cart());
+        return cartRepository.findByUserId(userId).orElseGet(Cart::new);
     }
 
     @Transactional
     public void addProductToCart(Long userId, Long productId, int quantity) {
         Cart cart = getCartByUserId(userId);
         Optional<Product> productOpt = productRepository.findById(productId);
+
         if (productOpt.isPresent()) {
             Product product = productOpt.get();
+
             Optional<CartItem> existingItem = cart.getItems().stream()
                     .filter(item -> item.getProduct().getId().equals(productId))
                     .findFirst();
 
             if (existingItem.isPresent()) {
+                // Increase quantity if the item exists
                 CartItem cartItem = existingItem.get();
                 cartItem.setQuantity(cartItem.getQuantity() + quantity);
             } else {
+                // Add new item if it doesn't exist in the cart
                 CartItem newItem = new CartItem(product, quantity);
                 cart.getItems().add(newItem);
             }
-            cartRepository.save(cart);
+
+            cartRepository.save(cart); // Save updated cart
         }
     }
 
@@ -52,7 +57,7 @@ public class CartService {
     public void removeProductFromCart(Long userId, Long productId) {
         Cart cart = getCartByUserId(userId);
         cart.getItems().removeIf(item -> item.getProduct().getId().equals(productId));
-        cartRepository.save(cart);
+        cartRepository.save(cart); // Save updated cart
     }
 
     public double calculateTotalPrice(Cart cart) {
@@ -64,6 +69,6 @@ public class CartService {
     public void clearCart(Long userId) {
         Cart cart = getCartByUserId(userId);
         cart.getItems().clear();
-        cartRepository.save(cart);
+        cartRepository.save(cart); // Save updated cart
     }
 }

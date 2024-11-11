@@ -2,36 +2,103 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Your Cart</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+      text-align: center;
+      padding: 12px;
+    }
+    th {
+      background-color: #f8f9fa;
+      font-weight: bold;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    .total-price {
+      font-weight: bold;
+      font-size: 1.2em;
+      text-align: right;
+    }
+    .actions form {
+      display: inline-block;
+      margin: 0;
+    }
+    .remove-btn, .checkout-btn {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .checkout-btn {
+      background-color: #007bff;
+      padding: 8px 15px;
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
-<h1>Your Cart</h1>
-<table>
-  <thead>
-  <tr>
-    <th>Product</th>
-    <th>Quantity</th>
-    <th>Price</th>
-    <th>Total</th>
-    <th>Actions</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr th:each="item : ${cart.items}">
-    <td th:text="${item.product.name}"></td>
-    <td th:text="${item.quantity}"></td>
-    <td th:text="${item.product.price}"></td>
-    <td th:text="${item.product.price * item.quantity}"></td>
-    <td>
-      <form th:action="@{/cart/remove}" method="post">
-        <input type="hidden" name="userId" th:value="${cart.user.id}" />
-        <input type="hidden" name="productId" th:value="${item.product.id}" />
-        <button type="submit">Remove</button>
-      </form>
-    </td>
-  </tr>
-  </tbody>
-</table>
-<p>Total Price: <span th:text="${totalPrice}"></span></p>
-<a th:href="@{/cart/checkout(userId=${cart.user.id})}">Proceed to Checkout</a>
+<div class="container">
+  <h1>Your Cart</h1>
+  <table>
+    <thead>
+    <tr>
+      <th>Product</th>
+      <th>Quantity</th>
+      <th>Price</th>
+      <th>Total</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : ${cart.items}">
+      <td th:text="${item.product.name}">Product Name</td>
+      <td th:text="${item.quantity}">Quantity</td>
+      <td th:text="${item.product.price}">Price</td>
+      <td th:text="${item.product.price * item.quantity}">Total</td>
+      <td class="actions">
+        <form th:action="@{/cart/remove}" method="post">
+          <input type="hidden" name="userId" th:value="${cart.user.id}" />
+          <input type="hidden" name="productId" th:value="${item.product.id}" />
+
+          <!-- CSRF Token for Secure Request -->
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+          <button type="submit" class="remove-btn">Remove</button>
+        </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <p class="total-price">Total Price: <span th:text="${totalPrice}"></span> USD</p>
+  <div style="text-align: right;">
+    <a th:href="@{/cart/checkout(userId=${cart.user.id})}" class="checkout-btn">Proceed to Checkout</a>
+  </div>
+</div>
 </body>
 </html>
