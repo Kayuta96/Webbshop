@@ -3,7 +3,7 @@
 <head>
     <title>Product List</title>
     <style>
-        /* Simple CSS for styling */
+        /* Styling remains the same */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -22,19 +22,19 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 5px;
         }
-        .search-bar {
+        .search-bar, .category-list {
             margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .search-bar input[type="text"] {
+        .search-bar input[type="text"], .category-list button {
             padding: 8px;
-            width: 60%;
             border-radius: 5px;
             border: 1px solid #ddd;
+            cursor: pointer;
         }
-        .search-bar button, .add-product, .home-button {
+        .search-bar button, .add-product, .home-button, .category-button, .add-category {
             padding: 8px 12px;
             background-color: #007bff;
             color: #fff;
@@ -43,11 +43,11 @@
             cursor: pointer;
             text-decoration: none;
         }
-        .search-bar button:hover, .add-product:hover, .home-button:hover {
-            background-color: #0056b3;
-        }
-        .add-product, .home-button {
+        .add-product, .home-button, .category-button, .add-category {
             margin-left: 10px;
+        }
+        .add-category {
+            background-color: #28a745;
         }
         table {
             width: 100%;
@@ -81,7 +81,7 @@
 <div class="container">
     <h1>Product List</h1>
 
-    <!-- Search, Add New Product, and Home Buttons -->
+    <!-- Search, Add New Product, Home, and Category List Buttons -->
     <div class="search-bar">
         <form th:action="@{/products/search}" method="get">
             <input type="text" name="query" placeholder="Search products..." />
@@ -89,8 +89,21 @@
         </form>
         <div>
             <a th:href="@{/index}" class="home-button">Home</a> <!-- Home button -->
-            <a th:href="@{/products/new}" class="add-product">Add New Product</a>
+            <a th:href="@{/products/new}" class="add-product">Add New Product</a> <!-- Add Product button -->
+            <a th:href="@{/admin/categories}" class="category-button">View Categories</a> <!-- View Categories button -->
+            <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}" th:href="@{/admin/categories/new}" class="add-category">Add Category</a> <!-- Add Category button for Admins only -->
         </div>
+    </div>
+
+    <!-- Display Category List for Filtering -->
+    <div class="category-list">
+        <h2>Filter by Category:</h2>
+        <ul style="list-style: none; padding: 0;">
+            <li><a th:href="@{/products}">All Products</a></li> <!-- Link to show all products -->
+            <li th:each="category : ${categories}">
+                <a th:href="@{/products/search(query=${category.name})}" th:text="${category.name}">Category</a>
+            </li>
+        </ul>
     </div>
 
     <!-- Product Table -->

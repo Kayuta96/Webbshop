@@ -38,8 +38,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Order placeOrderByUsername(String username) {
+        return null;
+    }
+
+    @Override
     public List<Order> getOrdersByUserId(Long userId) {
         return orderRepository.findByUserId(userId);
+    }
+
+    @Override
+    public List<Order> getOrdersByUsername(String username) {
+        return null;
     }
 
     @Override

@@ -2,26 +2,67 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Order History</title>
+  <style>
+    /* Basic styling */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      padding: 20px;
+      margin: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #f8f9fa;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+  </style>
 </head>
 <body>
-<h1>Your Order History</h1>
-<table>
-  <thead>
-  <tr>
-    <th>Order ID</th>
-    <th>Date</th>
-    <th>Status</th>
-    <th>Total</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr th:each="order : ${orders}">
-    <td th:text="${order.id}"></td>
-    <td th:text="${order.orderDate}"></td>
-    <td th:text="${order.status}"></td>
-    <td th:text="${order.totalPrice}"></td>
-  </tr>
-  </tbody>
-</table>
+<div class="container">
+  <h1>Your Order History</h1>
+  <table>
+    <thead>
+    <tr>
+      <th>Order ID</th>
+      <th>Date</th>
+      <th>Status</th>
+      <th>Total</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="order : ${orders}">
+      <td th:text="${order.id}"></td>
+      <!-- Format date to a readable format, e.g., "MMM dd, yyyy" -->
+      <td th:text="${#dates.format(order.orderDate, 'MMM dd, yyyy')}"></td>
+      <td th:text="${order.status}"></td>
+      <!-- Format price to display as currency -->
+      <td th:text="${#numbers.formatDecimal(order.totalPrice, 1, 2)}"></td>
+    </tr>
+    </tbody>
+  </table>
+</div>
 </body>
 </html>

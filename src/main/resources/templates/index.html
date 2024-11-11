@@ -10,19 +10,22 @@
             padding: 0;
             background-color: #f0f2f5;
             color: #333;
-            text-align: center;
         }
 
+        /* Header Styles */
         header {
             background-color: #007bff;
             color: #fff;
             padding: 20px;
+            text-align: center;
         }
 
         header h1 {
             margin: 0;
+            font-size: 2em;
         }
 
+        /* Navigation Styles */
         nav {
             margin-top: 10px;
         }
@@ -44,6 +47,43 @@
             font-size: 1.1em;
             margin-left: 10px;
         }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .container h2 {
+            color: #333;
+            margin-top: 0;
+        }
+
+        .container p {
+            font-size: 1.1em;
+            color: #666;
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            font-size: 0.9em;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+
+        footer p {
+            margin: 0;
+        }
     </style>
 </head>
 <body>
@@ -55,7 +95,7 @@
         <a th:href="@{/products}">View Products</a>
         <span th:if="${#authentication.principal != null}">
             | <a th:href="@{/orders/history}">My Orders</a>
-            | <a th:href="@{/logout}">Logout</a> <!-- Logout Link -->
+            | <a th:href="@{/logout}">Logout</a>
             <span class="welcome-message">Hello, <span th:text="${#authentication.principal.username}">User</span>!</span>
         </span>
         <span th:if="${#authentication.principal == null}">

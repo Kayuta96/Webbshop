@@ -1,6 +1,7 @@
 package com.example.webbshop.controller;
 
 import com.example.webbshop.model.Product;
+import com.example.webbshop.model.Category;
 import com.example.webbshop.service.ProductService;
 import com.example.webbshop.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ public class ProductController {
     @GetMapping
     public String listProducts(Model model) {
         model.addAttribute("products", productService.getAllProducts());
+        model.addAttribute("categories", categoryService.getAllCategories()); // Add categories to the model
         return "product-list"; // Points to product-list.html
     }
 
@@ -46,6 +48,17 @@ public class ProductController {
             model.addAttribute("categories", categoryService.getAllCategories());
             return "product-form";
         }
+
+        Optional<Category> categoryOpt = categoryService.findById(product.getCategory().getId());
+        if (categoryOpt.isPresent()) {
+            product.setCategory(categoryOpt.get());
+        } else {
+            model.addAttribute("error", "Selected category not found.");
+            model.addAttribute("categories", categoryService.getAllCategories());
+            return "product-form";
+        }
+
+        // Save the product after setting the category
         productService.saveProduct(product);
         return "redirect:/products";
     }
@@ -76,12 +89,16 @@ public class ProductController {
         productService.saveProduct(product);
         return "redirect:/products";
     }
+
     @GetMapping("/search")
     public String searchProducts(@RequestParam("query") String query, Model model) {
-        List<Product> products = productService.searchProductsByName(query);
+        List<Product> products = productService.searchProductsByName(query); // Ensure this can search by category name
         model.addAttribute("products", products);
-        return "product-list"; // Reuse the existing product list view
+        model.addAttribute("categories", categoryService.getAllCategories()); // Pass categories for filter display
+        return "product-list";
     }
+
+
 
 
 

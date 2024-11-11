@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -22,16 +23,22 @@ public class OrderController {
     }
 
     @PostMapping("/place")
-    public String placeOrder(@RequestParam("userId") Long userId) {
-        orderService.placeOrder(userId);
-        return "redirect:/orders/history?userId=" + userId;
+    public String placeOrder(Principal principal) {
+        if (principal != null) {
+            String username = principal.getName();
+            orderService.placeOrderByUsername(username); // Adjusted to use username
+        }
+        return "redirect:/orders/history";
     }
 
     @GetMapping("/history")
-    public String viewOrderHistory(@RequestParam("userId") Long userId, Model model) {
-        List<Order> orders = orderService.getOrdersByUserId(userId);
-        model.addAttribute("orders", orders);
-        return "order-history";
+    public String viewOrderHistory(Model model, Principal principal) {
+        if (principal != null) {
+            String username = principal.getName();
+            List<Order> orders = orderService.getOrdersByUsername(username);
+            model.addAttribute("orders", orders);
+        }
+        return "order-history"; // Points to order-history.html
     }
 
     @GetMapping("/admin")
