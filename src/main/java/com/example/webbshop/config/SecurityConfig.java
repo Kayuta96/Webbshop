@@ -27,13 +27,20 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
+<<<<<<< HEAD
                         .requestMatchers("/", "/products", "/register", "/login", "/cart/add", "/error").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**", "/cart/**").hasAnyRole("USER", "ADMIN")
+=======
+                        .requestMatchers("/", "/products", "/register", "/login").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+>>>>>>> parent of 8ee58ed (d)
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
+<<<<<<< HEAD
                         .usernameParameter("email")
                         .defaultSuccessUrl("/products", true)
                         .permitAll()
@@ -52,6 +59,17 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/register", "/error") // Allow /register and /error endpoints without CSRF token
                         .disable() // Ensure this is enabled only if appropriate
+=======
+                        .defaultSuccessUrl("/products", true)
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET")) // Allow GET requests for logout
+                        .logoutSuccessUrl("/") // Redirect to home after logout
+                        .invalidateHttpSession(true) // Invalidate session
+                        .deleteCookies("JSESSIONID") // Delete session cookie
+                        .permitAll()
+>>>>>>> parent of 8ee58ed (d)
                 );
 
         return http.build();
