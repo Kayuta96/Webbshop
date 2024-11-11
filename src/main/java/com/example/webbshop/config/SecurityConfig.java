@@ -7,10 +7,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -26,22 +27,31 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/products", "/register", "/login").permitAll() // Public endpoints
-                        .requestMatchers("/admin/**").hasRole("ADMIN") // Admin access
-                        .requestMatchers("/user/**", "/cart/**").hasAnyRole("USER", "ADMIN") // User and Admin access to /user and /cart paths
-                        .anyRequest().authenticated() // All other requests require authentication
+                        .requestMatchers("/", "/products", "/register", "/login", "/cart/add", "/error").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/user/**", "/cart/**").hasAnyRole("USER", "ADMIN")
+                        .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login") // Custom login page
-                        .defaultSuccessUrl("/products", true) // Redirect to /products after login
-                        .permitAll() // Allow everyone to access the login page
+                        .loginPage("/login")
+                        .usernameParameter("email")
+                        .defaultSuccessUrl("/products", true)
+                        .permitAll()
+                        .failureUrl("/login?error")
                 )
                 .logout(logout -> logout
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET")) // Allow GET requests for logout
-                        .logoutSuccessUrl("/") // Redirect to home after logout
-                        .invalidateHttpSession(true) // Invalidate session
-                        .deleteCookies("JSESSIONID") // Delete session cookie
-                        .permitAll() // Allow everyone to access logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                        .permitAll()
+                )
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS) // Ensure session creation on every access
+                )
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/register", "/error") // Allow /register and /error endpoints without CSRF token
+                        .disable() // Ensure this is enabled only if appropriate
                 );
 
         return http.build();
@@ -49,9 +59,11 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder auth = http.getSharedObject(AuthenticationManagerBuilder.class);
-        auth.userDetailsService(userAuthenticationService).passwordEncoder(passwordEncoder());
-        return auth.build();
+        return http.getSharedObject(AuthenticationManagerBuilder.class)
+                .userDetailsService(userAuthenticationService)
+                .passwordEncoder(passwordEncoder())
+                .and()
+                .build();
     }
 
     @Bean

@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import java.util.stream.Collectors;
 
 @Service
 public class UserAuthenticationService implements UserDetailsService {
@@ -24,15 +23,11 @@ public class UserAuthenticationService implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
-        String[] roles = user.getRoles().stream()
-                .map(role -> role.startsWith("ROLE_") ? role.substring(5) : role) // Remove "ROLE_" prefix if present
-                .toArray(String[]::new);
-
-        // Map User entity to UserDetails for Spring Security
+        // Construct UserDetails with roles directly (use .roles() or .authorities() based on role format)
         return org.springframework.security.core.userdetails.User
-                .withUsername(user.getEmail())
-                .password(user.getPassword())
-                .roles(roles) // Pass roles without "ROLE_" prefix
+                .withUsername(user.getEmail()) // Treat email as the username
+                .password(user.getPassword()) // Ensure password is already encoded
+                .roles(user.getRoles().toArray(new String[0])) // Use .roles() if roles are plain, or .authorities() if prefixed with "ROLE_"
                 .build();
     }
 }

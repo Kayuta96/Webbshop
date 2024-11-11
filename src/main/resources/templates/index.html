@@ -88,17 +88,19 @@
 </head>
 <body>
 <header>
-    <h1>Welcome to Our E-Commerce Store</h1>
+    <h1>Welcome to Our Store</h1>
 
     <!-- Navigation Links -->
     <nav>
         <a th:href="@{/products}">View Products</a>
-        <span th:if="${#authentication.principal != null}">
+
+        <span th:if="${username != null}">
             | <a th:href="@{/orders/history}">My Orders</a>
             | <a th:href="@{/logout}">Logout</a>
-            <span class="welcome-message">Hello, <span th:text="${#authentication.principal.username}">User</span>!</span>
+            <span class="welcome-message">Hello, <span th:text="${username}">User</span>!</span>
         </span>
-        <span th:if="${#authentication.principal == null}">
+
+        <span th:if="${username == null}">
             | <a th:href="@{/login}">Login</a>
             | <a th:href="@{/register}">Register</a>
         </span>
